@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recetas Calipan</title>
+    <style>
+    /* Estilos CSS */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Georgia', serif;
+        background-color: #faf3e0;
+        color: #2c2c2c;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .container {
+        background-color: #f7e8d3;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        max-width: 450px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .logo {
+        width: 50px;
+        height: 50px;
+        margin-right: 15px;
+    }
+
+    h1 {
+        color: #8b1a1a;
+        font-size: 28px;
+    }
+
+    label {
+        font-weight: bold;
+        display: block;
+        margin: 10px 0 5px;
+    }
+
+    input, select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #8b1a1a;
+        border-radius: 5px;
+        background-color: #fafafa;
+        color: #2c2c2c;
+    }
+
+    button {
+        width: 100%;
+        padding: 15px;
+        background-color: #8b1a1a;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 5px #4a1010;
+        transition: all 0.3s ease;
+    }
+
+    button:active {
+        transform: translateY(5px);
+        box-shadow: 0 2px #4a1010;
+    }
+
+    button:hover {
+        background-color: #4a1010;
+    }
+
+    #resultado {
+        margin-top: 20px;
+        text-align: left;
+        background-color: #fff6eb;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #8b1a1a;
+    }
+
+    th {
+        background-color: #4a1010;
+        color: #fff;
+        font-weight: bold;
+    }
+
+    td {
+        background-color: #ffffff;
+        color: #2c2c2c;
+    }
+
+    tr:hover td {
+        background-color: #f8d9c7;
+        transition: background-color 0.3s ease;
+    }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="logo_pan.png" alt="Logo de pan" class="logo">
+            <h1>Recetas Calipan</h1>
+        </div>
+        
+        <label for="receta">Selecciona una receta:</label>
+        <select id="receta">
+            <option value="empanadas">Empanadas</option>
+            <option value="almojabana">Almojábana</option>
+            <option value="bunuelos">Buñuelos</option>
+        </select>
+
+        <label for="cantidad">Ingresa la cantidad en gramos (ingrediente principal):</label>
+        <input type="number" id="cantidad" placeholder="Cantidad en gramos">
+
+        <button id="calcular">Calcular receta</button>
+
+        <div id="resultado"></div>
+    </div>
+
+    <script>
+    // Código JavaScript
+    document.getElementById('calcular').addEventListener('click', function () {
+        const recetaSeleccionada = document.getElementById('receta').value;
+        const cantidadSeleccionada = parseFloat(document.getElementById('cantidad').value);
+        
+        if (isNaN(cantidadSeleccionada) || cantidadSeleccionada <= 0) {
+            alert('Por favor, ingresa una cantidad válida.');
+            return;
+        }
+
+        const recetas = {
+            empanadas: {
+                ingredientes: { 'Harina': 6250, 'Grasa': 1000, 'Azúcar': 400, 'Sal': 125, 'Polvo de hornear': 20, 'Agua': 3000 },
+                principal: 'Harina'
+            },
+            almojabana: {
+                ingredientes: { 'Queso': 3500, 'Sal': 125, 'Azúcar': 250, 'Harina de maíz': 250, 'Polvo de hornear': 15, 'Huevo': 1, 'Harina de trigo': 250 },
+                principal: 'Queso'
+            },
+            bunuelos: {
+                ingredientes: { 'Queso campesino': 500, 'Colmaíz': 300, 'Explangle': 300, 'Azúcar': 250, 'Polvo de hornear': 10, 'Leche': 250 },
+                principal: 'Queso campesino'
+            }
+        };
+
+        const receta = recetas[recetaSeleccionada];
+        const factorConversion = cantidadSeleccionada / receta.ingredientes[receta.principal];
+
+        let resultadoHTML = `<h3>Resultado para ${recetaSeleccionada}:</h3>`;
+        resultadoHTML += '<table><tr><th>Ingrediente</th><th>Cantidad (g)</th></tr>';
+        for (let [ingrediente, cantidad] of Object.entries(receta.ingredientes)) {
+            let cantidadConvertida = (cantidad * factorConversion);
+            
+            // Si la cantidad es menor a 1, mostrar con tres decimales, sino mostrar entero
+            if (cantidadConvertida < 1) {
+                cantidadConvertida = cantidadConvertida.toFixed(3);
+            } else {
+                cantidadConvertida = Math.round(cantidadConvertida);
+            }
+
+            resultadoHTML += `<tr><td>${ingrediente}</td><td>${cantidadConvertida}g</td></tr>`;
+        }
+        resultadoHTML += '</table>';
+
+        document.getElementById('resultado').innerHTML = resultadoHTML;
+    });
+    </script>
+</body>
+</html>
